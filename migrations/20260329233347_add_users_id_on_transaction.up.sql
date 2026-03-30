@@ -1,10 +1,5 @@
-# trim-backend
-
-## Create migrations
-
-migrate create -ext sql -dir migrations {migration_name}
-
 ALTER TABLE transactions
+ADD COLUMN IF NOT EXISTS user_id INTEGER NOT NULL,
 ADD CONSTRAINT fk_transactions_user
 FOREIGN KEY (user_id)
 REFERENCES users(id)

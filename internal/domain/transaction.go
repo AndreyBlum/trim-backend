@@ -4,9 +4,9 @@ import "time"
 
 type Transaction struct {
 	ID        uint      `gorm:"primaryKey"`
-	Title     string
-	Type      string
-	Amount    float64
-	Category  string
-	CreatedAt time.Time
+	Title     string    `json:"title"`
+	Type      string    `json:"type"`
+	Amount    float64   `json:"amount"`
+	Category  string    `json:"category"`
+	CreatedAt time.Time `json:"createdAt"`
 }

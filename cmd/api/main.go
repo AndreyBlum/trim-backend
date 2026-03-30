@@ -4,9 +4,9 @@ import (
 	"log"
 
 	"trim/internal/config"
-	"trim/internal/handler"
+	"trim/internal/routes"
 
-	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/cors"
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
@@ -17,7 +17,7 @@ func runMigrations() {
 
 	m, err := migrate.New(
 		"file://migrations",
-		"postgres://postgres:postgres@localhost:5432/finance?sslmode=disable",
+		"postgres://postgres:postgres@localhost:5432/trim?sslmode=disable",
 	)
 
 	if err != nil {
@@ -29,6 +29,8 @@ func runMigrations() {
 	if err != nil && err.Error() != "no change" {
 		log.Fatal(err)
 	}
+
+	log.Default().Println("Migrations applied successfully")
 }
 
 func main() {
@@ -37,14 +39,8 @@ func main() {
 
 	config.ConnectDatabase()
 
-	r := gin.Default()
-
-	api := r.Group("/api")
-
-	{
-		api.GET("/transactions", handler.GetTransactions)
-		api.POST("/transactions", handler.CreateTransaction)
-	}
+	r := routes.SetupRoutes()
+	r.Use(cors.Default())
 
 	r.Run(":8080")
 }
