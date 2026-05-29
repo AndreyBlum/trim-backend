@@ -33,6 +33,20 @@ func runMigrations() {
 	log.Default().Println("Migrations applied successfully")
 }
 
+func vulnerableHandler(db *sql.DB) gin.HandlerFunc {
+    return func(c *gin.Context) {
+        userID := c.Query("id")
+        query := "SELECT * FROM users WHERE id = " + userID // taint flow direto
+        rows, err := db.Query(query)
+        if err != nil {
+            c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+            return
+        }
+        defer rows.Close()
+        c.JSON(http.StatusOK, gin.H{"ok": true})
+    }
+}
+
 func main() {
 
 	runMigrations()
